@@ -2,33 +2,28 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const [message, setMessage] = useState('');
-  const [health, setHealth] = useState({});
+  const [health, setHealth] = useState(null);
 
   useEffect(() => {
-    // Fetch API message
-    fetch('/api')
-      .then(res => res.json())
-      .then(data => setMessage(data.message))
-      .catch(console.error);
-
-    // Fetch health status
     fetch('/api/health')
       .then(res => res.json())
       .then(data => setHealth(data))
-      .catch(console.error);
+      .catch(err => setHealth({ error: err.message }));
   }, []);
 
   return (
     <div className="App">
       <header className="App-header">
         <h1>Welcome to Fleetly</h1>
-        <p>{message || 'Loading...'}</p>
-        <div className="health-status">
-          <h3>System Status</h3>
-          <p>API: {health.status || 'checking...'}</p>
-          <p>Database: {health.database || 'checking...'}</p>
-        </div>
+        {health ? (
+          <div>
+            <p>API Status: {health.status || 'unknown'}</p>
+            <p>Database: {health.database || 'unknown'}</p>
+            {health.error && <p>Error: {health.error}</p>}
+          </div>
+        ) : (
+          <p>Loading...</p>
+        )}
       </header>
     </div>
   );
