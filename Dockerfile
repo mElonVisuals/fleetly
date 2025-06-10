@@ -18,7 +18,7 @@ COPY --from=frontend-builder /app/build ./public
 
 # Environment variables
 ENV NODE_ENV=production
-ENV PORT=5555
+ENV PORT=3000
 
-EXPOSE 5555
+EXPOSE 3000
 CMD ["node", "index.js"]
