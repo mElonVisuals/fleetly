@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path'); // Add this line
 const mysql = require('mysql2/promise');
 
 const app = express();
@@ -18,7 +19,7 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Health check endpoint
+// Simple health check endpoint
 app.get('/api/health', async (req, res) => {
   try {
     await pool.query('SELECT 1');
@@ -36,9 +37,11 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-// Serve frontend in production
+// Serve static files from React in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('public'));
+  app.use(express.static(path.join(__dirname, 'public')));
+  
+  // Handle React routing, return all requests to React app
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
   });
