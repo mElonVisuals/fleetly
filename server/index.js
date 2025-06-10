@@ -39,17 +39,13 @@ app.get('/api/health', async (req, res) => {
 
 // Serve static files from React in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'public')));
-  
-  // Handle React routing, return all requests to React app
-  app.get('*', (req, res, next) => {
-  try {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  } catch (err) {
-    console.error('Error in wildcard route:', err);
-    next(err);
-  }
-});
+    const clientBuildPath = path.join(__dirname, '..', 'client', 'build');
+
+    app.use(express.static(clientBuildPath));
+
+    app.get('/*splat', (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+    });
 }
 
 const PORT = process.env.PORT || 5000;
