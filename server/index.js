@@ -42,9 +42,14 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'public')));
   
   // Handle React routing, return all requests to React app
-  app.get('*', (req, res) => {
+  app.get('*', (req, res, next) => {
+  try {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  });
+  } catch (err) {
+    console.error('Error in wildcard route:', err);
+    next(err);
+  }
+});
 }
 
 const PORT = process.env.PORT || 5000;
